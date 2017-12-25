@@ -1,27 +1,163 @@
 # AngularUniversalFirebase
+This step-by-step tutorial will show you how to deploy a Angular App with server-side rendering using Angular Universal using Firebase Hosting.  This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.2.
+* Angular version: 5.0.0
+* Firebase version: 3.16.0
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.2.
+# Generate a Universal Angular App
+Angular CLI has native Universal support starting from v1.6.  We will use the CLI to quickly generate Angular Universal server files, and then make some minor changes for our production build.
 
-## Development server
+1. Create a new Angular project
+    ```
+    ng new angular-universal-firebase
+    ```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+2. Generate Angular Universal using Angular CLI (v1.6 or greater)
+    ```
+    ng generate universal universal
+    ```
 
-## Code scaffolding
+3. Install `@angular/platform-server`
+    ```
+    npm install --save @angular/platform-server
+    ```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+4. Modify `main.server.ts` to the following:
+    ```typescript
+    import { enableProdMode } from '@angular/core';
+    export { AppServerModule } from './app/app.server.module';
 
-## Build
+    enableProdMode();
+    ```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+5. Add `/dist-server` to `.gitignore`
+    ```git
+    # compiled output
+    /dist
+    /dist-server
+    ...
+    ``` 
 
-## Running unit tests
+6. Build the app (`/dist` folder) and the server to render the app (`/dist-server` folder)
+    ```
+    ng build --prod && ng build --prod --app universal --output-hashing=none
+    ```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+# Deploying to Firebase
+Since we now have an Angular app with a `/dist` and `/dist-server` directories, we will now use Firebase functions to serve our application.  The below guide was originally written by *Aaron Te* and can be found at [Hackernoon: Deploy Angular Universal w/ Firebase](https://hackernoon.com/deploy-angular-universal-w-firebase-ad70ea2413a1).
 
-## Running end-to-end tests
+1. Create a Firebase project (eg. `angular-universal-firebase`)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+2. Log in to firebase using 
+    ```
+    firebase login
+    ```
 
-## Further help
+3. Initialize Firebase in the Angular project
+    ```
+    firebase init
+    ```
+    * Select `Functions` and `Hosting` for features
+    * Select the firebase project you created (eg. `angular-universal-firebase`)
+    * Select `javascipt` as the language used to write Cloud Functions
+    * Select `no` to install dependencies with npm
+    * Select all defaults for `Hosting`
 
+4. Add Angular dependencies to `package.json` in the `functions` directory
+    ```json
+    "dependencies": {
+        "@angular/animations": "^5.0.0",
+        "@angular/common": "^5.0.0",
+        "@angular/compiler": "^5.0.0",
+        "@angular/core": "^5.0.0",
+        "@angular/forms": "^5.0.0",
+        "@angular/http": "^5.0.0",
+        "@angular/platform-browser": "^5.0.0",
+        "@angular/platform-browser-dynamic": "^5.0.0",
+        "@angular/platform-server": "^5.1.2",
+        "@angular/router": "^5.0.0",
+        "firebase-admin": "~5.4.2",
+        "firebase-functions": "^0.7.1",
+        "rxjs": "^5.5.2",
+        "zone.js": "^0.8.14"
+    },
+    ```
+
+5. Install dependencies in the `functions` directory
+    ```
+    npm install
+    ```
+
+6. Copy the `dist` directory into the `functions` directory to make `/functions/dist/`.  This is because Firebase functions cannot access files outside of the `functions` directory.
+
+7. Create Firebase function (`index.html`) to serve the app.  This file is found in the `functions` directory.
+    ```javascript
+    require('zone.js/dist/zone-node');
+
+    const functions = require('firebase-functions');
+    const express = require('express');
+    const path = require('path');
+
+    const { enableProdMode } = require('@angular/core');
+    const { renderModuleFactory } = require('@angular/platform-server');
+    const { AppServerModuleNgFactory } = require('./dist-ssr/main.bundle');
+
+    enableProdMode();
+
+    const index = require('fs')
+        .readFileSync(path.resolve(__dirname, './dist/index.html'), 'utf8')
+        .toString();
+
+    let app = express();
+
+    app.get('**', function (req, res) {
+        renderModuleFactory(AppServerModuleNgFactory, {
+            url: req.path,
+            document: index
+        }).then(html => res.status(200).send(html));
+    });
+
+    exports.ssr = functions.https.onRequest(app);
+    ```
+
+8. Update `firebase.json` to:
+    ```json
+    {
+    "hosting": {
+        "public": "dist",
+        "rewrites": [{
+            "source": "**",
+            "destination": "ssr"
+        }]
+    }
+    }
+    ```
+
+9. Delete the `/public` folder that was automatically generated by Firebase functions during the `firebase init` process
+    ```
+    rm -rf public
+    ```
+
+10. Delete the `dist/index.html` file.  This is to ensure that Firebase won't serve the `html` file, but rather run the `ssr` function.
+    ```
+    rm dist/index.html
+    ```
+
+11. Add `functions/dist` and `functions/node_modules` to `.gitignore`
+    ```git
+    # compiled output
+    /dist
+    /functions/dist
+    ...
+
+    # dependencies
+    /node_modules
+    /functions/node_modules
+    ```
+
+12. Deploy to Firebase
+    ```
+    firebase deploy
+    ```
+
+# Further help
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
