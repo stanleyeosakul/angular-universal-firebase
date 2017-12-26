@@ -18,7 +18,7 @@ Angular CLI has native Universal support starting from v1.6.  We will use the CL
 
 3. Install `@angular/platform-server`
     ```
-    npm install --save @angular/platform-server
+    yarn add @angular/platform-server
     ```
 
 4. Modify `main.server.ts` to the following:
@@ -37,7 +37,7 @@ Angular CLI has native Universal support starting from v1.6.  We will use the CL
     ...
     ``` 
 
-6. Build the app (`/dist` folder) and the server to render the app (`/dist-server` folder)
+6. Build the app (`/dist` folder) and the server to render the app (`/dist-server` folder).
     ```
     ng build --prod && ng build --prod --app universal --output-hashing=none
     ```
@@ -62,7 +62,7 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
     * Select `no` to install dependencies with npm
     * Select all defaults for `Hosting`
 
-4. Add Angular dependencies to `package.json` in the `functions` directory
+4. Add Angular dependencies to `functions/package.json`, including @angular, rxjs, and zone.js.  The easiest way to add these dependencies will be to copy them from your root `package.json` file.  **IMPORTANT: Install dependencies in the `functions` directory with yarn.  NPM does not properly install `firebase-admin`**.  You will have to install express using `yarn add express`.
     ```json
     "dependencies": {
         "@angular/animations": "^5.0.0",
@@ -75,6 +75,7 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
         "@angular/platform-browser-dynamic": "^5.0.0",
         "@angular/platform-server": "^5.1.2",
         "@angular/router": "^5.0.0",
+        "express": "^4.16.2",
         "firebase-admin": "~5.4.2",
         "firebase-functions": "^0.7.1",
         "rxjs": "^5.5.2",
@@ -82,12 +83,12 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
     },
     ```
 
-5. Install dependencies in the `functions` directory
+5. Install all dependencies in the `functions` directory using `yarn`.
     ```
-    npm install
+    yarn install
     ```
 
-6. Copy the `dist` directory into the `functions` directory to make `/functions/dist/`.  This is because Firebase functions cannot access files outside of the `functions` directory.
+6. Copy the `dist` and `dist-server` folders into the `functions` directory. This is because Firebase functions cannot access files outside of this directory.  There should now be exact copies of those two folders in `functions/dist` and `functions/dist-server`, respectively.
 
 7. Create Firebase function (`index.html`) to serve the app.  This file is found in the `functions` directory.
     ```javascript
@@ -99,7 +100,7 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
 
     const { enableProdMode } = require('@angular/core');
     const { renderModuleFactory } = require('@angular/platform-server');
-    const { AppServerModuleNgFactory } = require('./dist-ssr/main.bundle');
+    const { AppServerModuleNgFactory } = require('./dist-server/main.bundle');
 
     enableProdMode();
 
@@ -122,13 +123,18 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
 8. Update `firebase.json` to:
     ```json
     {
-    "hosting": {
-        "public": "dist",
-        "rewrites": [{
-            "source": "**",
-            "destination": "ssr"
-        }]
-    }
+        "hosting": {
+            "public": "dist",
+            "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+            ],
+            "rewrites": [{
+                "source": "**",
+                "function": "ssr"
+            }]
+        }
     }
     ```
 
@@ -137,16 +143,15 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
     rm -rf public
     ```
 
-10. Delete the `dist/index.html` file.  This is to ensure that Firebase won't serve the `html` file, but rather run the `ssr` function.
-    ```
-    rm dist/index.html
-    ```
+10. Delete `dist/index.html` from the root directory.  This is so Firebase won’t serve the html file but rather run the ssr function. 
 
-11. Add `functions/dist` and `functions/node_modules` to `.gitignore`
+11. Add `functions/dist`, `functions/dist-server` and `functions/node_modules` to `.gitignore`
     ```git
     # compiled output
     /dist
+    /dist-server
     /functions/dist
+    /functions/dist-server
     ...
 
     # dependencies
