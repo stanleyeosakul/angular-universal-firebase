@@ -1,5 +1,5 @@
 # AngularUniversalFirebase
-This step-by-step tutorial will show you how to deploy a Angular App with server-side rendering using Angular Universal using Firebase Hosting.  This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.2.
+This step-by-step tutorial will show you how to deploy a Angular App with server-side rendering using Angular Universal with Firebase Hosting.  This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.2.
 * Angular version: 5.0.0
 * Firebase version: 3.16.0
 
@@ -43,7 +43,7 @@ Angular CLI has native Universal support starting from v1.6.  We will use the CL
     ```
 
 # Deploying to Firebase
-Since we now have an Angular app with a `/dist` and `/dist-server` directories, we will now use Firebase functions to serve our application.  The below guide was originally written by *Aaron Te* and can be found at [Hackernoon: Deploy Angular Universal w/ Firebase](https://hackernoon.com/deploy-angular-universal-w-firebase-ad70ea2413a1).
+Since we now have an Angular app with a `/dist` and `/dist-server` directories, we will now use Firebase Cloud Functions to serve our application.  This guide was originally written by *Aaron Te* and can be found at [Hackernoon: Deploy Angular Universal w/ Firebase](https://hackernoon.com/deploy-angular-universal-w-firebase-ad70ea2413a1), but has been slightly modified with minor changes.
 
 1. Create a Firebase project (eg. `angular-universal-firebase`)
 
