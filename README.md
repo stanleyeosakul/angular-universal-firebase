@@ -1,7 +1,7 @@
 # Deploy Angular Universal App with Firebase
 This step-by-step tutorial will show you how to deploy a Angular App with server-side rendering using Angular Universal with Firebase Hosting.  This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.2.
 * Angular version: 5.0.0
-* Firebase version: 3.16.0
+* Firebase CLI version: 3.16.0
 
 # Generate a Universal Angular App
 Angular CLI has native Universal support starting from v1.6.  We will use the CLI to quickly generate Angular Universal server files, and then make some minor changes for our production build.
