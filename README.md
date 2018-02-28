@@ -1,7 +1,7 @@
 # Deploy Angular Universal App with Firebase
-This step-by-step tutorial will show you how to deploy a Angular App with server-side rendering using Angular Universal with Firebase Hosting.  This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.2.
-* Angular version: 5.0.0
-* Firebase CLI version: 3.16.0
+This step-by-step tutorial will show you how to deploy a Angular App with server-side rendering using Angular Universal with Firebase Hosting.  This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.1.
+* Angular version: 5.2.6
+* Firebase CLI version: 3.17.4
 
 # Generate a Universal Angular App
 Angular CLI has native Universal support starting from v1.6.  We will use the CLI to quickly generate Angular Universal server files, and then make some minor changes for our production build.
@@ -65,21 +65,21 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
 4. Add Angular dependencies to `functions/package.json`, including @angular, rxjs, and zone.js.  The easiest way to add these dependencies will be to copy them from your root `package.json` file.  **IMPORTANT: Install dependencies in the `functions` directory with yarn.  NPM does not properly install `firebase-admin`**.  You will have to install express using `yarn add express`.
     ```json
     "dependencies": {
-        "@angular/animations": "^5.0.0",
-        "@angular/common": "^5.0.0",
-        "@angular/compiler": "^5.0.0",
-        "@angular/core": "^5.0.0",
-        "@angular/forms": "^5.0.0",
-        "@angular/http": "^5.0.0",
-        "@angular/platform-browser": "^5.0.0",
-        "@angular/platform-browser-dynamic": "^5.0.0",
-        "@angular/platform-server": "^5.1.2",
-        "@angular/router": "^5.0.0",
-        "express": "^4.16.2",
-        "firebase-admin": "~5.4.2",
-        "firebase-functions": "^0.7.1",
-        "rxjs": "^5.5.2",
-        "zone.js": "^0.8.14"
+      "@angular/animations": "^5.2.6",
+      "@angular/common": "^5.2.6",
+      "@angular/compiler": "^5.2.6",
+      "@angular/core": "^5.2.6",
+      "@angular/forms": "^5.2.6",
+      "@angular/http": "^5.2.6",
+      "@angular/platform-browser": "^5.2.6",
+      "@angular/platform-browser-dynamic": "^5.2.6",
+      "@angular/platform-server": "^5.2.6",
+      "@angular/router": "^5.2.6",
+      "express": "^4.16.2",
+      "firebase-admin": "~5.9.0",
+      "firebase-functions": "^0.8.1",
+      "rxjs": "^5.5.6",
+      "zone.js": "^0.8.20"
     },
     ```
 
@@ -90,7 +90,7 @@ Since we now have an Angular app with a `/dist` and `/dist-server` directories, 
 
 6. Copy the `dist` and `dist-server` folders into the `functions` directory. This is because Firebase functions cannot access files outside of this directory.  There should now be exact copies of those two folders in `functions/dist` and `functions/dist-server`, respectively.
 
-7. Create Firebase function (`index.html`) to serve the app.  This file is found in the `functions` directory.
+7. Create Firebase function (`index.js`) to serve the app.  This file is found in the `functions` directory.
     ```javascript
     require('zone.js/dist/zone-node');
 

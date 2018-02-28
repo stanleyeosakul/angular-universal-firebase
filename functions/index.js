@@ -11,16 +11,16 @@ const { AppServerModuleNgFactory } = require('./dist-server/main.bundle');
 enableProdMode();
 
 const index = require('fs')
-    .readFileSync(path.resolve(__dirname, './dist/index.html'), 'utf8')
-    .toString();
+  .readFileSync(path.resolve(__dirname, './dist/index.html'), 'utf8')
+  .toString();
 
 let app = express();
 
 app.get('**', function (req, res) {
-    renderModuleFactory(AppServerModuleNgFactory, {
-        url: req.path,
-        document: index
-    }).then(html => res.status(200).send(html));
+  renderModuleFactory(AppServerModuleNgFactory, {
+    url: req.path,
+    document: index
+  }).then(html => res.status(200).send(html));
 });
 
 exports.ssr = functions.https.onRequest(app);

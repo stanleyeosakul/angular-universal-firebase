@@ -2,6 +2,7 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
+    "lint": "./node_modules/.bin/eslint .",
     "serve": "firebase serve --only functions",
     "shell": "firebase experimental:functions:shell",
     "start": "npm run shell",
@@ -9,21 +10,25 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "@angular/animations": "^5.0.0",
-    "@angular/common": "^5.0.0",
-    "@angular/compiler": "^5.0.0",
-    "@angular/core": "^5.0.0",
-    "@angular/forms": "^5.0.0",
-    "@angular/http": "^5.0.0",
-    "@angular/platform-browser": "^5.0.0",
-    "@angular/platform-browser-dynamic": "^5.0.0",
-    "@angular/platform-server": "^5.1.2",
-    "@angular/router": "^5.0.0",
+    "@angular/animations": "^5.2.6",
+    "@angular/common": "^5.2.6",
+    "@angular/compiler": "^5.2.6",
+    "@angular/core": "^5.2.6",
+    "@angular/forms": "^5.2.6",
+    "@angular/http": "^5.2.6",
+    "@angular/platform-browser": "^5.2.6",
+    "@angular/platform-browser-dynamic": "^5.2.6",
+    "@angular/platform-server": "^5.2.6",
+    "@angular/router": "^5.2.6",
     "express": "^4.16.2",
-    "firebase-admin": "^5.6.0",
-    "firebase-functions": "^0.7.1",
-    "rxjs": "^5.5.2",
-    "zone.js": "^0.8.14"
+    "firebase-admin": "~5.9.0",
+    "firebase-functions": "^0.8.1",
+    "rxjs": "^5.5.6",
+    "zone.js": "^0.8.20"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.0",
+    "eslint-plugin-promise": "^3.6.0"
   },
   "private": true
 }
